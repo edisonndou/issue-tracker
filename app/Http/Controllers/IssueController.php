@@ -11,10 +11,10 @@ use Illuminate\Http\Request;
 
 class IssueController extends Controller
 {
+    //----------
     public function index(Project $project)
     {
         $query = $project->issues();
-
         if (request('status')) {
             $query->where('status', request('status'));
         }
@@ -23,9 +23,11 @@ class IssueController extends Controller
             $query->where('priority', request('priority'));
         }
 
-        if (request('tag')) {
-            $query->whereHas('tags', function($q) {
-                $q->where('id', request('tag'));
+        if (request()->filled('tag')) {
+            $tagId = request('tag');
+
+            $query->whereHas('tags', function ($q) use ($tagId) {
+                $q->where('tags.id', $tagId);
             });
         }
 
@@ -51,14 +53,14 @@ class IssueController extends Controller
             'comments_count' => $i->comments->count(),
         ])]);
     }
-
+    //----------
     public function create(Project $project)
     {
         $tags = Tag::all();
         $users = \App\Models\User::all();
         return view('issues.create', compact('project', 'tags', 'users'));
     }
-
+    //----------
     public function store(StoreIssueRequest $request, Project $project)
     {
         $issue = $project->issues()->create($request->validated());
@@ -71,9 +73,9 @@ class IssueController extends Controller
             $issue->assignees()->sync($request->assignees);
         }
 
-        return redirect()->route('issues.show', [$project, $issue])->with('success', 'Issue created!');
+        return redirect()->route('issues.show', $issue)->with('success', 'Issue created!');
     }
-
+    //----------
     public function show(Project $project, Issue $issue)
     {
         $project = $issue->project;
@@ -84,14 +86,14 @@ class IssueController extends Controller
 
         return view('issues.show', compact('project', 'issue', 'tags', 'users', 'comments'));
     }
-
+    //----------
     public function edit(Project $project, Issue $issue)
     {
         $tags = Tag::all();
         $users = \App\Models\User::all();
         return view('issues.edit', compact('project', 'issue', 'tags', 'users'));
     }
-
+    //----------
     public function update(UpdateIssueRequest $request, Project $project, Issue $issue)
     {
         $issue->update($request->validated());
@@ -104,27 +106,27 @@ class IssueController extends Controller
             $issue->assignees()->sync($request->assignees);
         }
 
-        return redirect()->route('issues.show', [$project, $issue])->with('success', 'Issue updated!');
+        return redirect()->route('issues.show', $issue)->with('success', 'Issue updated!');
     }
-
+    //----------
     public function destroy(Project $project, Issue $issue)
     {
         $issue->delete();
         return redirect()->route('projects.show', $project)->with('success', 'Issue deleted!');
     }
-
+    //----------
     // AJAX endpoints
     public function attachTag(Project $project, Issue $issue, Request $request)
     {
         $request->validate(['tag_id' => 'required|exists:tags,id']);
-        $issue->tags()->attach($request->tag_id);
+        $issue->tags()->syncWithoutDetaching([$request->tag_id]);
 
         return response()->json([
             'tag' => Tag::find($request->tag_id),
             'message' => 'Tag attached!',
         ]);
     }
-
+    //----------
     public function detachTag(Project $project, Issue $issue, Request $request)
     {
         $request->validate(['tag_id' => 'required|exists:tags,id']);
@@ -132,18 +134,18 @@ class IssueController extends Controller
 
         return response()->json(['message' => 'Tag detached!']);
     }
-
+    //----------
     public function attachUser(Project $project, Issue $issue, Request $request)
     {
         $request->validate(['user_id' => 'required|exists:users,id']);
-        $issue->assignees()->attach($request->user_id);
+        $issue->assignees()->syncWithoutDetaching([$request->user_id]);
 
         return response()->json([
             'user' => \App\Models\User::find($request->user_id),
             'message' => 'User assigned!',
         ]);
     }
-
+    //----------
     public function detachUser(Project $project, Issue $issue, Request $request)
     {
         $request->validate(['user_id' => 'required|exists:users,id']);
@@ -151,13 +153,13 @@ class IssueController extends Controller
 
         return response()->json(['message' => 'User unassigned!']);
     }
-
+    //----------
     public function loadComments(Project $project, Issue $issue)
     {
         $comments = $issue->comments()->latest()->paginate(5);
         return response()->json(['comments' => $comments->items(), 'total' => $comments->total()]);
     }
-
+    //----------
     public function storeComment(Request $request, Project $project, Issue $issue)
     {
         $request->validate([
@@ -172,12 +174,11 @@ class IssueController extends Controller
             'message' => 'Comment added!',
         ]);
     }
-
-    public function deleteComment(Project $project, Issue $issue, $commentId)
+    //----------
+    public function deleteComment(Project $project, Issue $issue, int $commentId)
     {
         $comment = $issue->comments()->findOrFail($commentId);
         $comment->delete();
-
         return response()->json(['message' => 'Comment deleted!']);
     }
 }

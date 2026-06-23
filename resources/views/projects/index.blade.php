@@ -3,6 +3,8 @@
 @section('title', 'Projects')
 
 @section('content')
+
+    {{-- Projects Showing --}}
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-12 d-flex justify-content-between align-items-center">
@@ -13,7 +15,7 @@
             </div>
         </div>
 
-        @if($projects->isEmpty())
+        @if ($projects->isEmpty())
             <div class="card">
                 <div class="card-body">
                     <div class="empty-state">
@@ -28,7 +30,7 @@
             </div>
         @else
             <div class="row">
-                @foreach($projects as $project)
+                @foreach ($projects as $project)
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="card project-card h-100">
                             <div class="card-body d-flex flex-column">
@@ -38,8 +40,9 @@
                                 <div class="mb-3">
                                     <small class="d-block text-muted">
                                         <i class="bi bi-calendar"></i>
-                                        @if($project->start_date && $project->deadline)
-                                            {{ $project->start_date->format('M d') }} - {{ $project->deadline->format('M d, Y') }}
+                                        @if ($project->start_date && $project->deadline)
+                                            {{ $project->start_date->format('M d') }} -
+                                            {{ $project->deadline->format('M d, Y') }}
                                         @else
                                             No dates set
                                         @endif
@@ -49,10 +52,13 @@
                                     </small>
                                 </div>
 
-                                <div class="btn-group btn-group-sm w-100" role="group">
-                                    <a href="{{ route('projects.show', $project) }}" class="btn btn-outline-primary">View</a>
-                                    <a href="{{ route('projects.edit', $project) }}" class="btn btn-outline-secondary">Edit</a>
-                                    <form action="{{ route('projects.destroy', $project) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this project?');">
+                                <div>
+                                    <a href="{{ route('projects.show', $project) }}"
+                                        class="btn btn-outline-primary">View</a>
+                                    <a href="{{ route('projects.edit', $project) }}"
+                                        class="btn btn-outline-secondary">Edit</a>
+                                    <form action="{{ route('projects.destroy', $project) }}" method="POST" class="d-inline"
+                                        onsubmit="return confirm('Delete this project?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger">Delete</button>

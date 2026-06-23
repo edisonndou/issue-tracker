@@ -3,6 +3,8 @@
 @section('title', $issue->title)
 
 @section('content')
+
+    {{-- Issues Show --}}
     <div class="container">
         <div class="row mb-4">
             <div class="col-12 d-flex justify-content-between align-items-center">
@@ -13,14 +15,15 @@
                     </p>
                 </div>
                 <div>
-                    <a href="{{ route('issues.edit', $issue) }}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-pencil"></i> Edit
+                    <a href="{{ route('issues.edit', $issue) }}" class="btn btn-outline-primary btn-sm mb-1">
+                        <i class="bi bi-pencil"></i> <span class="d-none d-md-inline">Edit</span>
                     </a>
-                    <form action="{{ route('issues.destroy', $issue) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this issue?');">
+                    <form action="{{ route('issues.destroy', $issue) }}" method="POST" class="d-inline"
+                        onsubmit="return confirm('Delete this issue?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-trash"></i> Delete
+                        <button type="submit" class="btn btn-outline-danger btn-sm mb-1">
+                            <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
                         </button>
                     </form>
                 </div>
@@ -53,7 +56,8 @@
                             @endforelse
                         </div>
 
-                        <form id="commentForm" onsubmit="addComment(event)">
+                        <form id="commentForm" action="{{ route('comments.store', $issue) }}" method="POST"
+                            onsubmit="addComment(event)">
                             @csrf
                             <div class="mb-3">
                                 <label for="author_name" class="form-label">Your Name</label>
@@ -99,15 +103,18 @@
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6 class="mb-0">Tags</h6>
-                        <button type="button" class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#addTagModal">
+                        <button type="button" class="btn btn-link btn-sm p-0" data-bs-toggle="modal"
+                            data-bs-target="#addTagModal">
                             <i class="bi bi-plus-circle"></i>
                         </button>
                     </div>
                     <div class="card-body" id="tagsList">
                         @forelse($issue->tags as $tag)
-                            <div class="tag-badge d-inline-block mb-2" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}">
+                            <div class="tag-badge d-inline-block mb-2"
+                                style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}">
                                 {{ $tag->name }}
-                                <button type="button" class="btn-close btn-sm ms-1" onclick="detachTag({{ $tag->id }})" style="font-size: 0.75rem;"></button>
+                                <button type="button" class="btn-close btn-sm ms-1"
+                                    onclick="detachTag({{ $tag->id }})" style="font-size: 0.75rem;"></button>
                             </div>
                         @empty
                             <p class="text-muted mb-0">No tags</p>
@@ -118,7 +125,8 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6 class="mb-0">Assigned To</h6>
-                        <button type="button" class="btn btn-link btn-sm p-0" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <button type="button" class="btn btn-link btn-sm p-0" data-bs-toggle="modal"
+                            data-bs-target="#addUserModal">
                             <i class="bi bi-plus-circle"></i>
                         </button>
                     </div>
@@ -126,7 +134,8 @@
                         @forelse($issue->assignees as $user)
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span>{{ $user->name }}</span>
-                                <button type="button" class="btn btn-link btn-sm p-0 text-danger" onclick="detachUser({{ $user->id }})">
+                                <button type="button" class="btn btn-link btn-sm p-0 text-danger"
+                                    onclick="detachUser({{ $user->id }})">
                                     <i class="bi bi-x-circle"></i>
                                 </button>
                             </div>
@@ -150,8 +159,8 @@
                 <div class="modal-body">
                     <select id="tagSelect" class="form-select">
                         <option value="">Select a tag</option>
-                        @foreach($tags as $tag)
-                            @if(!$issue->tags->contains($tag->id))
+                        @foreach ($tags as $tag)
+                            @if (!$issue->tags->contains($tag->id))
                                 <option value="{{ $tag->id }}">{{ $tag->name }}</option>
                             @endif
                         @endforeach
@@ -176,8 +185,8 @@
                 <div class="modal-body">
                     <select id="userSelect" class="form-select">
                         <option value="">Select a user</option>
-                        @foreach($users as $user)
-                            @if(!$issue->assignees->contains($user->id))
+                        @foreach ($users as $user)
+                            @if (!$issue->assignees->contains($user->id))
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                             @endif
                         @endforeach
@@ -192,13 +201,16 @@
     </div>
 @endsection
 
+{{-- AJAX --}}
 @section('scripts')
     <script>
         function attachTag() {
             const tagId = $('#tagSelect').val();
             if (!tagId) return;
 
-            $.post('{{ route("issues.attachTag", [$project, $issue]) }}', { tag_id: tagId }, function(response) {
+            $.post('{{ route('issues.attachTag', [$project, $issue]) }}', {
+                tag_id: tagId
+            }, function(response) {
                 $('#tagSelect').val('');
                 $('#addTagModal').modal('hide');
                 loadTags();
@@ -206,7 +218,9 @@
         }
 
         function detachTag(tagId) {
-            $.post('{{ route("issues.detachTag", [$project, $issue]) }}', { tag_id: tagId }, function() {
+            $.post('{{ route('issues.detachTag', [$project, $issue]) }}', {
+                tag_id: tagId
+            }, function() {
                 loadTags();
             });
         }
@@ -215,7 +229,9 @@
             const userId = $('#userSelect').val();
             if (!userId) return;
 
-            $.post('{{ route("issues.attachUser", [$project, $issue]) }}', { user_id: userId }, function() {
+            $.post('{{ route('issues.attachUser', [$project, $issue]) }}', {
+                user_id: userId
+            }, function() {
                 $('#userSelect').val('');
                 $('#addUserModal').modal('hide');
                 loadAssignees();
@@ -223,7 +239,9 @@
         }
 
         function detachUser(userId) {
-            $.post('{{ route("issues.detachUser", [$project, $issue]) }}', { user_id: userId }, function() {
+            $.post('{{ route('issues.detachUser', [$project, $issue]) }}', {
+                user_id: userId
+            }, function() {
                 loadAssignees();
             });
         }
@@ -239,22 +257,35 @@
         function addComment(event) {
             event.preventDefault();
             const form = $('#commentForm');
+            const action = form.attr('action');
             const data = {
                 author_name: form.find('input[name="author_name"]').val(),
                 body: form.find('textarea[name="body"]').val(),
             };
 
-            $.post('{{ route("issues.storeComment", [$project, $issue]) }}', data, function(response) {
-                const comment = response.comment;
-                const html = `
-                    <div class="comment">
-                        <div class="comment-header">${comment.author_name}</div>
-                        <div class="comment-time">just now</div>
-                        <div class="comment-body">${comment.body}</div>
-                    </div>
-                `;
-                $('#commentsList').prepend(html);
-                form[0].reset();
+            $.ajax({
+                url: action,
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                headers: {
+                    Accept: 'application/json',
+                },
+                success(response) {
+                    const comment = response.comment;
+                    const html = `
+                        <div class="comment">
+                            <div class="comment-header">${comment.author_name}</div>
+                            <div class="comment-time">just now</div>
+                            <div class="comment-body">${comment.body}</div>
+                        </div>
+                    `;
+                    $('#commentsList').prepend(html);
+                    form[0].reset();
+                },
+                error(xhr) {
+                    console.error('Comment submission failed', xhr.responseJSON || xhr.responseText);
+                }
             });
         }
     </script>

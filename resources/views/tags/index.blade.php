@@ -3,6 +3,8 @@
 @section('title', 'Tags')
 
 @section('content')
+
+    {{-- Tags Showing --}}
     <div class="container">
         <div class="row mb-4">
             <div class="col-12 d-flex justify-content-between align-items-center">
@@ -13,7 +15,7 @@
             </div>
         </div>
 
-        @if($tags->isEmpty())
+        @if ($tags->isEmpty())
             <div class="card">
                 <div class="card-body">
                     <div class="empty-state">
@@ -41,22 +43,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($tags as $tag)
+                                        @foreach ($tags as $tag)
                                             <tr>
                                                 <td>
-                                                    <span class="tag-badge" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}">
+                                                    <span class="tag-badge"
+                                                        style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}">
                                                         {{ $tag->name }}
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div style="width: 30px; height: 30px; background-color: {{ $tag->color }}; border-radius: 4px; border: 1px solid #ddd;"></div>
+                                                    <div
+                                                        style="width: 30px; height: 30px; background-color: {{ $tag->color }}; border-radius: 4px; border: 1px solid #ddd;">
+                                                    </div>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="{{ route('tags.edit', $tag) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                                                    <form action="{{ route('tags.destroy', $tag) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this tag?');">
+                                                    <a href="{{ route('tags.edit', $tag) }}"
+                                                        class="btn btn-sm btn-outline-primary">Edit</a>
+                                                    <form action="{{ route('tags.destroy', $tag) }}" method="POST"
+                                                        class="d-inline" onsubmit="return confirm('Delete this tag?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                        <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger">Delete</button>
                                                     </form>
                                                 </td>
                                             </tr>

@@ -18,18 +18,18 @@ class DatabaseSeeder extends Seeder
     {
         // Create users
         $user1 = User::factory()->create([
-            'name' => 'John Developer',
-            'email' => 'john@example.com',
+            'name' => 'Edison Ndou',
+            'email' => 'edison@example.com',
         ]);
 
         $user2 = User::factory()->create([
-            'name' => 'Jane Manager',
-            'email' => 'jane@example.com',
+            'name' => 'Edison Ndou 2',
+            'email' => 'edison2@example.com',
         ]);
 
         User::factory()->create([
-            'name' => 'Bob Designer',
-            'email' => 'bob@example.com',
+            'name' => 'Edison Ndou 3',
+            'email' => 'edison3@example.com',
         ]);
 
         // Create tags

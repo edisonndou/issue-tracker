@@ -5,15 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Issue;
 use App\Http\Requests\StoreCommentRequest;
-use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    //----------
     public function store(StoreCommentRequest $request, Issue $issue)
     {
         $comment = $issue->comments()->create($request->validated());
 
-        if (request()->wantsJson()) {
+        if ($request->expectsJson()) {
             return response()->json([
                 'comment' => $comment,
                 'message' => 'Comment added!',
@@ -22,7 +22,7 @@ class CommentController extends Controller
 
         return back()->with('success', 'Comment added!');
     }
-
+    //----------
     public function destroy(Comment $comment)
     {
         $issue = $comment->issue;

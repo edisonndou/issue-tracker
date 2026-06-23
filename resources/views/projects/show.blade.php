@@ -3,6 +3,8 @@
 @section('title', $project->name)
 
 @section('content')
+
+    {{-- Project Details --}}
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-md-8">
@@ -42,7 +44,8 @@
                             </div>
                             <div class="col-md-2">
                                 <small class="text-muted">In Progress</small>
-                                <p class="mb-0 fw-bold text-warning">{{ $issues->where('status', 'in_progress')->count() }}</p>
+                                <p class="mb-0 fw-bold text-warning">{{ $issues->where('status', 'in_progress')->count() }}
+                                </p>
                             </div>
                             <div class="col-md-2">
                                 <small class="text-muted">Closed</small>
@@ -79,26 +82,30 @@
                             <div class="col-md-3">
                                 <select id="tagFilter" class="form-select form-select-sm">
                                     <option value="">All Tags</option>
-                                    @foreach($tags as $tag)
+                                    @foreach ($tags as $tag)
                                         <option value="{{ $tag->id }}">{{ $tag->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <input type="text" id="searchFilter" class="form-control form-control-sm" placeholder="Search issues...">
+                                <input type="text" id="searchFilter" class="form-control form-control-sm"
+                                    placeholder="Search issues...">
                             </div>
                         </div>
                     </div>
                     <div class="card-body" id="issuesContainer">
-                        @if($issues->isEmpty())
+                        @if ($issues->isEmpty())
                             <div class="text-center py-5">
                                 <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.5;"></i>
                                 <p class="text-muted mt-2">No issues yet</p>
                             </div>
                         @else
                             <div id="issuesList">
-                                @foreach($issues as $issue)
-                                    @include('issues.partials.issue-item', ['issue' => $issue, 'project' => $project])
+                                @foreach ($issues as $issue)
+                                    @include('issues.partials.issue-item', [
+                                        'issue' => $issue,
+                                        'project' => $project,
+                                    ])
                                 @endforeach
                             </div>
                         @endif
@@ -121,16 +128,22 @@
                 search: $('#searchFilter').val(),
             };
 
-            $.get('{{ route("projects.issues.index", $project) }}', params, function(response) {
+            $.get('{{ route('projects.issues.index', $project) }}', params, function(response) {
                 if (response.issues.length === 0) {
-                    $('#issuesList').html('<div class="text-center py-5"><i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.5;"></i><p class="text-muted mt-2">No issues found</p></div>');
+                    $('#issuesList').html(
+                        '<div class="text-center py-5"><i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.5;"></i><p class="text-muted mt-2">No issues found</p></div>'
+                        );
                 } else {
                     let html = '';
                     response.issues.forEach(issue => {
                         const statusClass = 'status-' + issue.status;
                         const priorityClass = 'priority-' + issue.priority;
-                        const tagsHtml = issue.tags.map(tag => `<span class="tag-badge" style="background-color: ${tag.color}20; color: ${tag.color}">${tag.name}</span>`).join('');
-                        const assigneesHtml = issue.assignees.map(user => `<div class="assignee-avatar" title="${user.name}">${user.name.charAt(0)}</div>`).join('');
+                        const tagsHtml = issue.tags.map(tag =>
+                            `<span class="tag-badge" style="background-color: ${tag.color}20; color: ${tag.color}">${tag.name}</span>`
+                            ).join('');
+                        const assigneesHtml = issue.assignees.map(user =>
+                            `<div class="assignee-avatar" title="${user.name}">${user.name.charAt(0)}</div>`
+                            ).join('');
 
                         html += `
                             <div class="card mb-2 issue-card">

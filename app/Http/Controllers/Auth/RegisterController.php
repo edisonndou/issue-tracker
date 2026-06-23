@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
+    //----------
     public function show()
     {
         return view('auth.register');
     }
-
+    //----------
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -31,9 +32,7 @@ class RegisterController extends Controller
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
-
         return redirect(route('projects.index'));
     }
 }

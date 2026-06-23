@@ -17,15 +17,16 @@
                     <span class="priority-{{ $issue->priority }} ms-2">
                         Priority: {{ ucfirst($issue->priority) }}
                     </span>
-                    @if($issue->due_date)
+                    @if ($issue->due_date)
                         <small class="text-muted ms-2">
                             Due: {{ $issue->due_date->format('M d, Y') }}
                         </small>
                     @endif
                 </div>
                 <div class="mt-2">
-                    @foreach($issue->tags as $tag)
-                        <span class="tag-badge" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}">
+                    @foreach ($issue->tags as $tag)
+                        <span class="tag-badge"
+                            style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}">
                             {{ $tag->name }}
                         </span>
                     @endforeach
@@ -33,7 +34,7 @@
             </div>
             <div class="col-md-2 text-end">
                 <div class="mb-2">
-                    @foreach($issue->assignees as $assignee)
+                    @foreach ($issue->assignees as $assignee)
                         <div class="assignee-avatar" title="{{ $assignee->name }}">
                             {{ $assignee->name[0] }}
                         </div>
