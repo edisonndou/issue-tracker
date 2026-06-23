@@ -28,33 +28,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('projects.issues', IssueController::class)->shallow();
 
     // Issue AJAX endpoints
-    // Route::post('projects/{project}/issues/{issue}/attach-tag', [IssueController::class, 'attachTag'])->name('issues.attachTag');
-    // Route::post('projects/{project}/issues/{issue}/detach-tag', [IssueController::class, 'detachTag'])->name('issues.detachTag');
-    // Route::post('projects/{project}/issues/{issue}/attach-user', [IssueController::class, 'attachUser'])->name('issues.attachUser');
-    // Route::post('projects/{project}/issues/{issue}/detach-user', [IssueController::class, 'detachUser'])->name('issues.detachUser');
-    // Route::get('projects/{project}/issues/{issue}/comments', [IssueController::class, 'loadComments'])->name('issues.loadComments');
-    // Route::post('projects/{project}/issues/{issue}/comments', [IssueController::class, 'storeComment'])->name('issues.storeComment');
-    // Route::delete('projects/{project}/issues/{issue}/comments/{commentId}', [IssueController::class, 'deleteComment'])->name('issues.deleteComment');
-    // Route::get('projects/{project}/issues', [IssueController::class, 'index'])->name('projects.issues.index');
-
-    Route::prefix('projects/{project}/issues')
-    ->name('projects.issues.')
-    ->controller(IssueController::class)
-    ->group(function () {
-        Route::get('/', 'index')->name('index');
-
-        Route::prefix('{issue}')->group(function () {
-            Route::post('attach-tag', 'attachTag')->name('attachTag');
-            Route::post('detach-tag', 'detachTag')->name('detachTag');
-
-            Route::post('attach-user', 'attachUser')->name('attachUser');
-            Route::post('detach-user', 'detachUser')->name('detachUser');
-
-            Route::get('comments', 'loadComments')->name('comments.index');
-            Route::post('comments', 'storeComment')->name('comments.store');
-            Route::delete('comments/{commentId}', 'deleteComment')->name('comments.destroy');
-        });
-    });
+    Route::post('projects/{project}/issues/{issue}/attach-tag', [IssueController::class, 'attachTag'])->name('issues.attachTag');
+    Route::post('projects/{project}/issues/{issue}/detach-tag', [IssueController::class, 'detachTag'])->name('issues.detachTag');
+    Route::post('projects/{project}/issues/{issue}/attach-user', [IssueController::class, 'attachUser'])->name('issues.attachUser');
+    Route::post('projects/{project}/issues/{issue}/detach-user', [IssueController::class, 'detachUser'])->name('issues.detachUser');
+    Route::get('projects/{project}/issues/{issue}/comments', [IssueController::class, 'loadComments'])->name('issues.loadComments');
+    Route::post('projects/{project}/issues/{issue}/comments', [IssueController::class, 'storeComment'])->name('issues.storeComment');
+    Route::delete('projects/{project}/issues/{issue}/comments/{commentId}', [IssueController::class, 'deleteComment'])->name('issues.deleteComment');
+    Route::get('projects/{project}/issues', [IssueController::class, 'index'])->name('projects.issues.index');
 
     // Tags
     Route::resource('tags', TagController::class);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use App\Http\Requests\StoreTagRequest;
+use App\Http\Requests\UpdateTagRequest;
 use Illuminate\Http\Request;
 
 class TagController extends Controller
@@ -36,13 +37,8 @@ class TagController extends Controller
         return view('tags.edit', compact('tag'));
     }
     //----------
-    public function update(Request $request, Tag $tag)
+    public function update(UpdateTagRequest $request, Tag $tag)
     {
-        $request->validate([
-            'name' => 'required|string|unique:tags,name,' . $tag->id . '|max:255',
-            'color' => 'nullable|string|max:7',
-        ]);
-
         $tag->update($request->validated());
         return redirect()->route('tags.index')->with('success', 'Tag updated!');
     }
